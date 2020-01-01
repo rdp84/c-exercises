@@ -21,4 +21,10 @@ int main(void)
   printf("%s%li\n", "Value of (p - (p - 2)): ", (p - (p - 2))); /* 2 is printed because address of (p - 2) is 2 integers less than p */
 
   printf(format, p, *p + 7, 3 * **&p + 1, 5 * (p - (p - 2)));
+  
+  /* Number 2 exercise */
+
+  printf("%s%d\n", "Integer value of p: ", p);
+  printf("%s%d\n", "Integer value of p - 2:", p -2);
+
 }
