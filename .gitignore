@@ -1,3 +1,7 @@
+# Emacs
+*#* 
+.*~
+
 # Ignore bin directories
 bin/
 */bin/*
