@@ -36,7 +36,7 @@ wordlength(void)
   int i;
   unsigned v = (unsigned) ~0;
 
-  for (i = 0; (v = v >> 1) > 0; ++i)
+  for (i = 1; (v = v >> 1) > 0; ++i)
     ;
   return i;
 }
