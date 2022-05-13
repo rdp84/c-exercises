@@ -1,0 +1,36 @@
+
+Makefile,242
+reverse_polish: getch.o getop.o \reverse_polish2,1
+getch.o: getch.c calc.hgetch.o6,116
+getop.o: getop.c calc.hgetop.o8,156
+main.o: main.c calc.hmain.o10,196
+stack.o: stack.c calc.hstack.o12,233
+clean:clean14,273
+tags:tags17,336
+
+getch.c,201
+#define BUFSIZE BUFSIZE3,19
+char buf[BUFSIZE];  /* buffer for ungetch */buf5,41
+int  bufp = 0;      /* next free position in buf */bufp6,86
+getch(void)getch10,195
+ungetch(int c)ungetch17,308
+
+TAGS,0
+
+stack.c,210
+#define MAXVAL MAXVAL3,19
+int    sp = 0;       /* next free stack position */sp5,74
+double val[MAXVAL];  /* value stack */val6,126
+push(double f)push10,201
+pop(void)pop20,373
+clear(void)clear32,524
+
+getop.c,27
+getop(char s[])getop6,92
+
+main.c,48
+#define MAXOP MAXOP5,57
+main(void)main9,139
+
+calc.h,28
+#define NUMBER NUMBER5,42
