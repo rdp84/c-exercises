@@ -5,9 +5,10 @@
 #define BUFSIZE    100
 #define ARRAYSIZE  4
 
-extern char buf[];
-extern int  bufp, array[];
+extern char    buf[];
+extern int     bufp;
+extern double  array[];
 
 int  getch(void);
 void ungetch(int);
-int  getint(int *);
+int  getfloat(double *);
