@@ -21,6 +21,16 @@ day_of_year(int year, int month, int day)
   for (i = 1; i < month; i++)
     day += daytab[leap][i];
   return day;
+
+  /*
+    Exercise 5-9:
+
+    char *p = daytab[LEAP(year)];
+
+    while (--month)
+      day += *++p;
+    return day;
+   */
 }
 
 /* month_day: set month, day from day of year */
@@ -40,4 +50,32 @@ month_day(int year, int yearday, int *pmonth, int *pday)
     yearday -= daytab[leap][i];
   *pmonth = i;
   *pday = yearday;
+
+  /*
+    Exercise 5-9:
+
+    char *p = daytab[LEAP(year)];
+    *pday = yearday;
+    *pmonth = 1;
+
+    while (*pday > *++p) {
+      *pday -= *p;
+      *pmonth += 1;
+    }
+   */
+}
+
+/* month_name: return name of the n-th month */
+char *
+month_name(int n)
+{
+  static char *name[13] = {
+    "Illegal month",
+    "January", "February", "March",
+    "April", "May", "June",
+    "July", "August", "September",
+    "October", "November", "December"
+  };
+
+  return (n < 1 || n > 12) ? name[0] : name[n];
 }
