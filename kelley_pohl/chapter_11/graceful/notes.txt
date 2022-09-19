@@ -1,0 +1,141 @@
+Libraries
+---------
+
+Static
+------
+Simply a collection of ordinary object files; conventionally, static libraries end with a ".a" suffix.
+The collection is created using the archiver program (ar). Aren't used as often as they once were because
+of the advantages of shared libraries. Still they're sometimes created, they existed first historically
+and they're simpler to explain.
+
+Static libraries permit users to link to programs without having to recompile its code, saving recompilation
+time. This saving in time is less important now, given todays speeds. Static libraries are useful for
+developers if they wish to permit programmers to link to their library but don't want to give the library
+source code. In theory code in static ELF libraries that is linked into an executable should run slightly
+faster (1-5%) that a shared or dynamically loaded library but in practice this rarely seems to be the case.
+
+To create a static library or to add additional object files to an existing library use:
+
+    # Adds object file gcalloc, gfclose and gfopen to the static library graceful.a, creating graceful.a
+    # if it doesn't already exist.
+    ar -rcsv graceful.a gcalloc.o gfclose.o gfopen.o
+
+Historical note: after creating the library it was once necessary to run the command:
+
+    ranlib graceful.a
+
+which created a symbol table within the archive. This command is now embedded in ar with 's' flag
+
+To then use the library use:
+
+    gcc -Wall -o prog -Iinclude/ main.c graceful.a
+
+Shared
+------
+
+Shared libraries are libraries that are loaded by programs when they start. When installed properly, all
+programs that start afterwards automatically use the new shared library. Its actually much more flexible
+and sophisticated than this, because the approach used by Linux permits you to:
+
+    - update libraries and still support programs that want to use older, non-backward-compatible versions
+    - override specific libraries or specific functions in a library when executing a particular program
+    - do all this while programs are running using existing libraries
+
+For shared libraries to support all of these desired properites a number of conventions must be followed.
+
+    soname     - prefixed with "lib", library name, ".so", followed by a period and version number incremented
+                 whenver the interafce changes
+    realname   - filename containing the actual library code. It adds to the soname a period, a minor number, a
+                 period and a version number. This allows you to know exactly which version(s) of the library aren
+                 installed.
+    linkername - the name the compiler uses when requesting a library. Simply the soname without any version number. 
+
+Programs, when they internally list the shared libraries they need, should only list the soname. When you create a
+shared library, you create it with a specific filename (with more detailed version information). You then install
+it to one of a few special directories and then run ldconfig which sets up the soname as a symbolic link to the
+realname. ldconfig does not create the linker name, typically this is done during library installation, and is
+usually a symbolic link to the "latest" soname or realname.
+
+Thus:
+    soname     = /usr/lib/libreadline.so.3 is a symbolic link to:
+    realname   = /usr/lib/libreadline.so.3.0 and we then have
+    linkername = /usr/lib/libreadline.so which is a symbolic link to the soname or realname.
+
+
+On GNU glibc-bases systems starting up an ELF binary executable automatically causes the program loader to be loaded
+and run. On Linux systems, this loader is named /lib/ld-linux.so.X and /lib64/ld-linux-x86-64.so.X where X is a
+version number. This loader, in turn, finds and loads all other shared libraries used by the program.
+
+The list of directories to search for is stored in the /etc/ld.so.conf file; by default /lib and /lib64 are searched.
+Searching all of these directories at program startup would be grossly inefficient, so a caching arrangement is
+actually used. ldconfig writes a cache to /etc/ld.so.cache thats then used by other programs which greatly speeds up
+access to the libraries.
+
+Various environment variables can be used to control this process:
+
+    LD_LIBRARY_PATH - colon separated set of directories where libraries should be searched for first
+    LD_PRELOAD - lists shared libraries with functions that override the standard set
+
+Creating a shared library is relatively straightforward. Create the object files with -fPIC or -fpic
+compiler flag; these enable "position independednt code" generation, a require for shared libraries.
+You pass the soname using the -Wl flag; this flag passes options along to the linker, in our case
+the -soanme option.
+
+    # Generate object files
+    gcc -Wall -g -fPIC -c src/*.c
+
+    # Create shared object
+    gcc -shared -Wl,-soanme,libmygraceful.so.1 -o libmygraceful.so.1.0.1 \
+        gcalloc.o gfclose.o gfopen.o -lc
+
+    # Copy shared object to lib directory. Run ldconfig to create symbolic link of soname -> realname
+    sudo cp libmygraceful.so.1.0.1 /lib64
+    sudo ldconfig
+
+    # Create a symbolic link for linkername -> soname or realname (here I link to soname)
+    sudo ln -sf /lib64/libmygraceful.so.1 /lib64/libmygraceful.so
+
+    # Compile program, linking to shared library. Can miss out "lib" and extension from linkername, linker
+    # will know how to handle it if we've set things up correctly.
+    gcc -Wall -Iinclude -o prog main.c -lmygraceful
+
+    # Run program
+    ./prog
+
+    # View a list of shared libraries used by a program
+    ldd prog
+
+If you don't have access to some of the protected directories used above can do:
+
+    # Create shared library as above, placing it in a lib directory
+
+    # Run ldconfig on that directory
+    ldconfig -n ./lib/
+
+    # Create a symbolic link for linkername -> soname
+    ln -sf ./lib/libmygraceful.so.1 ./lib/libmygraceful.so
+
+    # Compile program, linking to shared library. Can pass to the compiler additional dirctory
+    # to look for libraries with -L flag
+    gcc -Wall -Iinclude -L./lib/ -o prog main.c -lmygraceful
+
+    # Run the program and pass in the path to the library
+    LD_LIBRARY_PATH=lib ./prog
+
+ If you dont pass in the library path above you see things like:
+
+     ./prog: error while loading shared libraries: libmygraceful.so.1: cannot open shared object file:
+    No such file or directory
+
+at runtime.
+
+When a new version of a library is binary-incompatible with the old one the soname needs to change. In C,
+there are four basic reasons that a library would cease to be binary compatible:
+
+    1. behaviour of a function changes sp that it no longer meets its original specification
+    2. Exported data items change
+    3. Exported function is removed
+    4. Interface of an exported function changes
+
+If you can avoid these reasons, you can keep your libraries binary-compatible. Said another way, you
+can keep your Application Binary Interface (ABI) compatible
