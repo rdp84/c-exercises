@@ -6,6 +6,7 @@
 int main(int argc, char **argv) { 
   if (argc == 2) { 
     expr_t e; 
+    printf("%s\n", argv[1]);
     int i = parse(argv[1], 0, &e);
     if (i == -1) { 
       printf("parse error\n");

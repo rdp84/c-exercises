@@ -1,4 +1,5 @@
 DEBUG_FLAGS = -fsanitize=address -fsanitize=undefined -g -fno-omit-frame-pointer -Wall -pedantic
+# DEBUG_FLAGS = -fsanitize=undefined -Wall -pedantic
 
 all:
 	gcc -c lab5.c

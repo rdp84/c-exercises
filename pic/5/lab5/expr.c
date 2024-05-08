@@ -3,7 +3,7 @@
 #include "expr.h"
 
 expr_t mkLit(int n) { 
-  expr_t e;
+  expr_t e = malloc(sizeof(struct expr));
   e->type = LIT;
   e->data.literal = n;
   return e;
