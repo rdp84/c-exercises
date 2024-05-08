@@ -1,6 +1,11 @@
-# Ignore bin directories
+# Ignore bin directories and object files
 bin/
 */bin/*
+*.o
+
+# Downloaded files
+*.pdf
+*.tar.gz
 
 # Emacs
 *#*
