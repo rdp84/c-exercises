@@ -3,7 +3,7 @@
 #include "expr.h"
 
 expr_t mkLit(int n) { 
-  expr_t e;
+  expr_t e = malloc(sizeof(struct expr));
   e->type = LIT;
   e->data.literal = n;
   return e;
@@ -34,7 +34,7 @@ void free_expr(expr_t e) {
     case PLUS:
     case TIMES: {
       free_expr(e->data.args.fst);
-      free_expr(e->data.args.fst);
+      free_expr(e->data.args.snd);
       free(e);
       break;
     }
@@ -47,7 +47,7 @@ void free_expr(expr_t e) {
 expr_t copy_expr(expr_t e) { 
   switch (e->type) { 
   case LIT:
-    return e;
+    return mkLit(e->data.literal);
   case PLUS:
     return mkPlus(copy_expr(e->data.args.fst), 
 		  copy_expr(e->data.args.snd));
