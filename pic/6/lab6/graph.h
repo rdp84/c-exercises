@@ -12,8 +12,6 @@ struct node {
 typedef struct node Node;
 
 /* Predefined constructors */
-
-Node *empty;
 Node *node(int value, Node *left, Node *right);
 
 /* Basic problems */
