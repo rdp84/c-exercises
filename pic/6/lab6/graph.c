@@ -87,7 +87,6 @@ void graph_free(Node *node) {
   unmark(node);
   get_nodes(node, dest);
 
-  for (--numberOfNodes; numberOfNodes >= 0; numberOfNodes--) {
+  while (--numberOfNodes >= 0)
     free(dest[numberOfNodes]);
-  }
 }
