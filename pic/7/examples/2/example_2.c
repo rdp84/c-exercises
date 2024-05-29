@@ -37,9 +37,10 @@ Node *complete(int n) {
   if (n == 0) {
     return empty;
   } else {
+    /* Still leaks memory, children will end up with rc field of 1 */
     return node(n,
-                complete(n-1),
-                complete(n-1));
+                complete(n-1),  /* bumps rc to 2 */
+                complete(n-1)); /* bumps rc to 2 */
   }
 }
 

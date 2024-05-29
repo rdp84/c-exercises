@@ -1,14 +1,16 @@
 CC	= gcc
 CFLAGS	= -Wall -fsanitize=address -fsanitize=undefined -g -fno-omit-frame-pointer -pedantic
 # CFLAGS	= -Wall
-OBJECTS	= example_2.o
-OUTPUT	= -o ../../../../bin/example_2
+OBJECTS	= example_3.o gc.o
+OUTPUT	= -o ../../../../bin/example_3
 
-example2: $(OBJECTS)
+
+example3: $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) $(OUTPUT)
 
-example_2.o: node.h
+example_3.o: gc.h
+gc.o: gc.h
 
 .PHONY: clean
 clean:
-	rm ../../../../bin/example_2 $(OBJECTS)
+	rm ../../../../bin/example_3 $(OBJECTS)
