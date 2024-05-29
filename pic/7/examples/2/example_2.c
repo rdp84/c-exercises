@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include "node.h"
 
@@ -17,15 +16,16 @@ Node *node(int value, Node *left, Node *right) {
 }
 
 void inc_ref(Node *node) {
-  if (node != NULL)
+  if (node != NULL) {
     node->rc += 1;
+  }
 }
 
 void dec_ref(Node *node) {
   if (node != NULL) {
-    if (node->rc > 1)
+    if (node->rc > 1) {
       node->rc -= 1;
-    else {
+    } else {
       dec_ref(node->left);
       dec_ref(node->right);
       free(node);
@@ -37,14 +37,9 @@ Node *complete(int n) {
   if (n == 0) {
     return empty;
   } else {
-    Node *sub = complete(n-1);
-    Node *result = node(n, sub, sub);
-    /*
-      If you were to forget to decrement here you'd have a memory leak
-      as the children would have a rc field of 1
-     */
-    dec_ref(sub);
-    return result;
+    return node(n,
+                complete(n-1),
+                complete(n-1));
   }
 }
 
