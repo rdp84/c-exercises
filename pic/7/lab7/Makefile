@@ -1,25 +1,15 @@
-# The debug flags to enable the sanitizers
-DEBUG_FLAGS = -fsanitize=address -fsanitize=undefined -g -fno-omit-frame-pointer -Wall -pedantic
+CC		= gcc
+# CFLAGS	= -Wall -fsanitize=address -fsanitize=undefined
+CFLAGS	= -Wall
+OBJECTS	= lab7.o re.o
+OUTPUT 	= -o ../../../bin/lab7
 
-all: 
-	gcc -Wall -pedantic -c lab7.c
-	gcc -Wall -pedantic -c re.c 
-	gcc -o lab7 lab7.o re.o
+lab7: $(OBJECTS)
+	$(CC) $(CFLAGS) $(OUTPUT) $(OBJECTS)
 
-clang:
-	clang -Wall -pedantic -c lab7.c
-	clang -Wall -pedantic -c re.c 
-	clang -o lab7 lab7.o re.o
+lab7.o: re.h
+re.o: re.h
 
-sane: 
-	gcc ${DEBUG_FLAGS} -c lab7.c
-	gcc ${DEBUG_FLAGS} -c re.c 
-	gcc -o lab7 lab7.o re.o
-
-sane-clang:
-	clang ${DEBUG_FLAGS} -c lab7.c
-	clang ${DEBUG_FLAGS} -c re.c 
-	clang -o lab7 lab7.o re.o
-
+.PHONY: clean
 clean:
-	rm -f lab7.o re.o lab7
+	rm ../../../bin/lab7 $(OBJECTS)

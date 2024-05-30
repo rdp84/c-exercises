@@ -3,7 +3,7 @@
 #include "re.h"
 
 arena_t create_arena(int size) { 
-  arena_t arena = malloc(sizeof(arena));
+  arena_t arena = malloc(sizeof(struct arena));
   arena->size = size;
   arena->current = 0;
   arena->exprs = malloc(size * sizeof(Regexp));
@@ -57,11 +57,7 @@ int re_match(Regexp *r, char *s, int i) {
   if (r != NULL) {
     switch (r->type) {
     case CHR:
-      if (r->data.chr == s[i]) {
-        return i+1;
-      } else {
-        return -1;
-      }
+      return r->data.chr == s[i] ? i+1 : -1;
     case SEQ:
       if (re_match(r->data.pair.fst, s, i) < 0) {
         return -1;
@@ -75,6 +71,8 @@ int re_match(Regexp *r, char *s, int i) {
       } else {
         return j;
       }
+    default:
+      return -1;
     }
   } else { 
     return -1;
