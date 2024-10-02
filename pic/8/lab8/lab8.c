@@ -31,6 +31,13 @@ void matrix_test(void) {
 
   matrix_t m6 = matrix_multiply_transposed(m1, m5);
   matrix_print(m6);
+
+  matrix_free(m1);
+  matrix_free(m2);
+  matrix_free(m3);
+  matrix_free(m4);
+  matrix_free(m5);
+  matrix_free(m6);
 }
 /* Expected result of matrix_test():
 0	-1	-2	-3	-4	
@@ -65,15 +72,17 @@ void matrix_test(void) {
 typedef matrix_t (*multiplier)(matrix_t m1, matrix_t m2); 
 
 void time_it(multiplier f, matrix_t m1, matrix_t m2, char *msg) { 
+  matrix_t m;
   clock_t start = clock();
-  (*f)(m1, m2);  // It doesn't matter for this exercise,
-		 // but do you see the memory leak?
-                 // The multiplcation returns an allocated matrix
-                 // Even though we don't use it here, the memory
-                 // has been allocated and not freed
+  m = (*f)(m1, m2);  // It doesn't matter for this exercise,
+                     // but do you see the memory leak?
+                     // The multiplcation returns an allocated matrix
+                     // Even though we don't use it here, the memory
+                     // has been allocated and not freed
   clock_t end = clock();
   clock_t diff = end - start;
   printf("%s: %ld microseconds\n", msg, diff);
+  matrix_free(m);
 }
 
 int main(void) { 
@@ -84,5 +93,7 @@ int main(void) {
   matrix_t m2 = matrix_create(500, 500);
   time_it(matrix_multiply, m1, m2, "matrix_multiply");
   time_it(matrix_multiply_fast, m1, m2, "matrix_multiply_fast");
+  matrix_free(m1);
+  matrix_free(m2);
   return 0;
 }
