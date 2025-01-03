@@ -4,7 +4,7 @@ OBJECTS	= example_1.o
 OUTPUT	= -o ../../../../bin/example_1
 
 example1: $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) $(OUTPUT)
+	$(CC) $(CFLAGS) $(OUTPUT) $(OBJECTS)
 
 example_1.o:
 
